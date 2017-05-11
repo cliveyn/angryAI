@@ -7,3 +7,9 @@ https://github.com/deeplearning4j/rl4j
 
 https://github.com/deeplearning4j/deeplearning4j
 - Java-based open source projects for deep learning
+
+https://github.com/technobium/q-learning-java
+- Java-based Q-learning implementation examples
+
+http://www.cse.unsw.edu.au/~cs9417ml/RL1/index.html
+- Java-based RL tutorial with examplar source codes
