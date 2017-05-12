@@ -1,0 +1,160 @@
+pig0:
+Coordinates: 559, 315, 11, 7
+Type: Pig
+
+pig1:
+Coordinates: 652, 314, 11, 10
+Type: Pig
+
+pig2:
+Coordinates: 604, 353, 15, 11
+Type: Pig
+
+redbird3:
+Coordinates: 171, 314, 6, 9
+Type: RedBird
+
+redbird4:
+Coordinates: 119, 366, 10, 9
+Type: RedBird
+
+redbird5:
+Coordinates: 131, 372, 9, 9
+Type: RedBird
+
+redbird6:
+Coordinates: 143, 372, 9, 9
+Type: RedBird
+
+unknown3:
+Coordinates: 547, 302, 11, 22
+Type: Wood
+
+unknown5:
+Coordinates: 548, 323, 44, 6
+Type: Wood
+
+unknown7:
+Coordinates: 548, 296, 44, 6
+Type: Wood
+
+unknown9:
+Coordinates: 551, 372, 22, 11
+Type: Stone
+
+unknown11:
+Coordinates: 555, 350, 11, 11
+Type: Wood
+
+unknown13:
+Coordinates: 556, 329, 5, 21
+Type: Wood
+
+unknown15:
+Coordinates: 557, 361, 22, 11
+Type: Wood
+
+unknown17:
+Coordinates: 559, 286, 22, 11
+Type: Ice
+
+unknown19:
+Coordinates: 566, 350, 23, 11
+Type: Wood
+
+unknown21:
+Coordinates: 567, 328, 11, 22
+Type: Stone
+
+unknown23:
+Coordinates: 567, 264, 4, 21
+Type: Ice
+
+unknown25:
+Coordinates: 573, 372, 22, 11
+Type: Stone
+
+unknown27:
+Coordinates: 579, 361, 10, 11
+Type: Wood
+
+unknown29:
+Coordinates: 582, 301, 11, 22
+Type: Wood
+
+unknown31:
+Coordinates: 583, 328, 5, 22
+Type: Wood
+
+unknown33:
+Coordinates: 590, 366, 44, 6
+Type: Wood
+
+unknown35:
+Coordinates: 628, 372, 22, 11
+Type: Stone
+
+unknown37:
+Coordinates: 629, 323, 44, 6
+Type: Wood
+
+unknown39:
+Coordinates: 629, 301, 5, 22
+Type: Wood
+
+unknown41:
+Coordinates: 629, 296, 44, 5
+Type: Wood
+
+unknown43:
+Coordinates: 633, 350, 11, 11
+Type: Wood
+
+unknown45:
+Coordinates: 634, 361, 22, 11
+Type: Wood
+
+unknown47:
+Coordinates: 634, 328, 5, 22
+Type: Wood
+
+unknown49:
+Coordinates: 635, 301, 5, 22
+Type: Wood
+
+unknown51:
+Coordinates: 641, 285, 21, 10
+Type: Ice
+
+unknown53:
+Coordinates: 644, 350, 22, 11
+Type: Wood
+
+unknown55:
+Coordinates: 645, 328, 11, 22
+Type: Stone
+
+unknown57:
+Coordinates: 650, 372, 23, 11
+Type: Stone
+
+unknown59:
+Coordinates: 650, 263, 5, 22
+Type: Ice
+
+unknown61:
+Coordinates: 656, 361, 11, 11
+Type: Wood
+
+unknown63:
+Coordinates: 662, 329, 5, 22
+Type: Wood
+
+unknown65:
+Coordinates: 663, 301, 6, 22
+Type: Wood
+
+unknown67:
+Coordinates: 669, 302, 5, 22
+Type: Wood
+

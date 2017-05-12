@@ -1,0 +1,76 @@
+pig0:
+Coordinates: 572, 351, 14, 10
+Type: Pig
+
+redbird1:
+Coordinates: 192, 323, 7, 11
+Type: RedBird
+
+redbird2:
+Coordinates: 172, 365, 10, 11
+Type: RedBird
+
+redbird3:
+Coordinates: 140, 366, 11, 11
+Type: RedBird
+
+redbird4:
+Coordinates: 156, 370, 11, 11
+Type: RedBird
+
+unknown3:
+Coordinates: 527, 312, 9, 51
+Type: Ice
+
+unknown5:
+Coordinates: 528, 286, 49, 26
+Type: Ice
+
+unknown7:
+Coordinates: 539, 319, 24, 17
+Type: Wood
+
+unknown9:
+Coordinates: 540, 336, 5, 25
+Type: Wood
+
+unknown11:
+Coordinates: 552, 336, 5, 25
+Type: Stone
+
+unknown13:
+Coordinates: 552, 330, 50, 7
+Type: Stone
+
+unknown15:
+Coordinates: 565, 318, 26, 12
+Type: Wood
+
+unknown17:
+Coordinates: 574, 291, 6, 28
+Type: Ice
+
+unknown19:
+Coordinates: 576, 285, 48, 27
+Type: Ice
+
+unknown21:
+Coordinates: 591, 319, 24, 18
+Type: Wood
+
+unknown23:
+Coordinates: 595, 337, 6, 25
+Type: Stone
+
+unknown25:
+Coordinates: 608, 336, 6, 26
+Type: Wood
+
+unknown27:
+Coordinates: 618, 311, 6, 51
+Type: Ice
+
+unknown1:
+Coordinates: 507, 361, 139, 23
+Type: Hill
+

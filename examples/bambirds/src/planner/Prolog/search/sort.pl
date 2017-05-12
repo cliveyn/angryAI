@@ -1,0 +1,4 @@
+
+
+doDivideAndConquerSort(List,SortedList) :-
+	

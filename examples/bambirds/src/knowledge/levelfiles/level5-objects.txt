@@ -1,0 +1,168 @@
+pig0:
+Coordinates: 587, 306, 10, 11
+Type: Pig
+
+pig1:
+Coordinates: 593, 317, 10, 7
+Type: Pig
+
+pig2:
+Coordinates: 591, 329, 10, 7
+Type: Pig
+
+pig3:
+Coordinates: 584, 348, 15, 14
+Type: Pig
+
+pig4:
+Coordinates: 588, 367, 15, 14
+Type: Pig
+
+redbird5:
+Coordinates: 185, 328, 6, 10
+Type: RedBird
+
+redbird6:
+Coordinates: 126, 372, 8, 9
+Type: RedBird
+
+redbird7:
+Coordinates: 143, 372, 10, 10
+Type: RedBird
+
+redbird8:
+Coordinates: 161, 372, 10, 10
+Type: RedBird
+
+unknown2:
+Coordinates: 512, 348, 35, 35
+Type: Stone
+
+unknown3:
+Coordinates: 546, 331, 45, 7
+Type: Ice
+
+unknown5:
+Coordinates: 548, 337, 6, 47
+Type: Stone
+
+unknown7:
+Coordinates: 554, 337, 5, 47
+Type: Stone
+
+unknown9:
+Coordinates: 561, 361, 12, 22
+Type: Stone
+
+unknown11:
+Coordinates: 561, 338, 11, 23
+Type: Stone
+
+unknown13:
+Coordinates: 567, 287, 9, 45
+Type: Stone
+
+unknown15:
+Coordinates: 569, 281, 23, 8
+Type: Wood
+
+unknown17:
+Coordinates: 573, 259, 6, 23
+Type: Ice
+
+unknown19:
+Coordinates: 573, 287, 9, 46
+Type: Wood
+
+unknown21:
+Coordinates: 574, 253, 46, 7
+Type: Ice
+
+unknown23:
+Coordinates: 574, 242, 5, 12
+Type: Ice
+
+unknown25:
+Coordinates: 576, 338, 6, 46
+Type: Wood
+
+unknown27:
+Coordinates: 578, 260, 9, 23
+Type: Ice
+
+unknown29:
+Coordinates: 579, 288, 9, 46
+Type: Wood
+
+unknown31:
+Coordinates: 588, 266, 14, 14
+Type: Stone
+
+unknown33:
+Coordinates: 588, 242, 5, 12
+Type: Ice
+
+unknown35:
+Coordinates: 599, 281, 23, 8
+Type: Wood
+
+unknown37:
+Coordinates: 601, 332, 46, 6
+Type: Ice
+
+unknown39:
+Coordinates: 603, 242, 5, 12
+Type: Ice
+
+unknown41:
+Coordinates: 605, 287, 6, 47
+Type: Wood
+
+unknown43:
+Coordinates: 606, 260, 7, 23
+Type: Ice
+
+unknown45:
+Coordinates: 609, 338, 5, 46
+Type: Wood
+
+unknown47:
+Coordinates: 609, 287, 10, 46
+Type: Wood
+
+unknown49:
+Coordinates: 613, 259, 7, 23
+Type: Ice
+
+unknown51:
+Coordinates: 615, 242, 5, 12
+Type: Ice
+
+unknown53:
+Coordinates: 617, 360, 11, 24
+Type: Stone
+
+unknown55:
+Coordinates: 617, 287, 6, 46
+Type: Stone
+
+unknown57:
+Coordinates: 618, 338, 11, 23
+Type: Stone
+
+unknown59:
+Coordinates: 631, 338, 6, 46
+Type: Stone
+
+unknown61:
+Coordinates: 636, 337, 7, 47
+Type: Stone
+
+unknown63:
+Coordinates: 642, 347, 37, 37
+Type: Stone
+
+unknown1:
+Coordinates: 691, 349, 68, 35
+Type: Hill
+
