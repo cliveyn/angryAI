@@ -13,3 +13,7 @@ https://github.com/technobium/q-learning-java
 
 http://www.cse.unsw.edu.au/~cs9417ml/RL1/index.html
 - Java-based RL tutorial with examplar source codes
+
+https://github.com/sudeepraja/Model-Free-Episodic-Control
+https://github.com/ShibiHe/Model-Free-Episodic-Control
+- Model-free episodic control algorithm python implementation
