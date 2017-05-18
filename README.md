@@ -17,3 +17,6 @@ http://www.cse.unsw.edu.au/~cs9417ml/RL1/index.html
 https://github.com/sudeepraja/Model-Free-Episodic-Control
 https://github.com/ShibiHe/Model-Free-Episodic-Control
 - Model-free episodic control algorithm python implementation
+
+https://github.com/imanolarrieta/angrybirds
+- Python-based Angrybirds Auto-agent with RL
