@@ -6,7 +6,7 @@
 **This work is licensed under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 **To view a copy of this license, visit http://www.gnu.org/licenses/
  *****************************************************************************/
-package ab.demo;
+package src.ab.demo;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import ab.demo.other.ActionRobot;
-import ab.demo.other.Shot;
+import src.ab.demo.other.ActionRobot;
+import src.ab.demo.other.Shot;
 import ab.planner.TrajectoryPlanner;
 import ab.utils.StateUtil;
 import ab.vision.ABObject;
@@ -178,7 +178,7 @@ public class NaiveAgent implements Runnable {
 					{
 						// randomly choose between the trajectories, with a 1 in
 						// 6 chance of choosing the high one
-						if (randomGenerator.nextInt(6) == 0)
+						if (randomGenerator.nextInt(6) ==0)
 							releasePoint = pts.get(1);
 						else
 							releasePoint = pts.get(0);

@@ -1,10 +1,10 @@
-package ab.demo;
+package src.ab.demo;
 
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import ab.demo.other.ActionRobot;
-import ab.demo.other.Shot;
+import src.ab.demo.other.ActionRobot;
+import src.ab.demo.other.Shot;
 import ab.planner.TrajectoryPlanner;
 import ab.vision.Vision;
 

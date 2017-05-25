@@ -1146,7 +1146,7 @@ public class VisionMBR {
 				_scene[y][x] = ((colour & 0x00e00000) >> 15)
 						| ((colour & 0x0000e000) >> 10)
 						| ((colour & 0x000000e0) >> 5);
-				//System.out.println(" x " + x + " y " + y + " 3-bit rgb " + _scene[y][x]);
+				//System.out.println(" x " + x + " y " + y + " from "+colour + " to 3-bit rgb " + _scene[y][x]);
 			}
 		}
 
@@ -1165,6 +1165,22 @@ public class VisionMBR {
 		// find bounding boxes and segment colours
 		_boxes = VisionUtils.findBoundingBoxes(_segments);
 	}
-
-
+	
+	public List<Rectangle> findBoxesMBRs() {
+		ArrayList<Rectangle> objects = new ArrayList<Rectangle>();
+		for(int i = 0; i<_boxes.length;i++){
+			objects.add(_boxes[i]);
+		}
+		return objects;
+	}
+	
+	public int[][] findMFCState(){
+		int[][] state = VisionUtils.getState(_scene);
+		return state;
+	}
+	
+	public BufferedImage getStateImg(){
+		BufferedImage stateImg = VisionUtils.getStateImg(_scene);
+		return stateImg;
+	}
 }

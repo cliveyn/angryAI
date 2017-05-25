@@ -39,7 +39,7 @@ import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
 
-import ab.demo.other.ActionRobot;
+import src.ab.demo.other.ActionRobot;
 import ab.vision.VisionUtils;
 
 public class ImageSegFrame {

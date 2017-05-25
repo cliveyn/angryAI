@@ -466,8 +466,7 @@ public class TrajectoryPlanner {
     }  
 	public int getTapTime(Rectangle sling, Point release, Point target, int tapInterval)
 	{
-		if (tapInterval == 0)
-			return 0;
+		if (tapInterval == 0) return 0;
 		Point tapPoint = new Point();
 		int distance = target.x - sling.x;
 		double r = ((double)tapInterval/100);

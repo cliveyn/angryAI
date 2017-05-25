@@ -35,6 +35,13 @@ import Jama.Matrix;
 /* VisionUtils ------------------------------------------------------------ */
 
 public class VisionUtils {
+	public static int ss = 10; //shrink scale
+	public static int startX = 380;
+	public static int endX = 40;
+	public static int startY = 200;
+	public static int endY = 80;
+	
+	
 	public static Color fontColor = Color.blue;
 	public static Color boxesColor = Color.ORANGE;
       // crops a bounding box to be within an image
@@ -211,19 +218,82 @@ public class VisionUtils {
 
 		return image;
 	}
+	
+	
+	
+		public static int[][] getState(int[][] scene){
+	
+			int maxValue = -1;
+			int minValue = Integer.MAX_VALUE;
+			for (int y =startY; y < scene.length-endY; y++) {
+				for (int x = startX; x < scene[y].length-endX; x++) {
+					maxValue = Math.max(maxValue, scene[y][x]);
+					minValue = Math.min(minValue, scene[y][x]);
+				}
+			}
+
+			if (maxValue == minValue)
+				maxValue = minValue + 1;
+			final double scale = 255.0 / (maxValue - minValue);
+
+			
+			int state[][] = new int[(scene.length-(startY+endY))/ss][(scene[0].length-(startX+endX))/ss];
+			
+			for (int y = 0; y < (scene.length-(startY+endY))/ss; y++) {
+				for (int x = 0; x < (scene[y].length-(startX+endX))/ss; x++) {
+					
+					int sum = 0;
+					for(int yy=y*ss; yy<y*ss+ss; yy++){
+						for(int xx=x*ss; xx<x*ss+ss; xx++){
+							sum += (int) (scale * (scene[yy+startY][xx+startX] - minValue));
+						}
+					}
+					state[y][x] = sum/(ss*ss);
+				}
+			}
+			
+			return state;
+		}
+		
+		public static BufferedImage getStateImg(int[][] scene) {
+			int state[][] = getState(scene);
+			
+			BufferedImage image = new BufferedImage(state[0].length*ss, state.length*ss,
+					BufferedImage.TYPE_INT_RGB);
+			
+			for (int y = 0; y < state.length; y++) {
+				for (int x = 0; x < state[y].length; x++) {
+					int c = state[y][x];
+					
+					for(int yy=y*ss; yy<y*ss+ss; yy++){
+						for(int xx=x*ss; xx<x*ss+ss; xx++){
+							image.setRGB(xx, yy, c << 16 | c << 8 | c);
+						}
+					}
+				}
+			}
+			
+			return image;
+		}
 
 	// convert a colour image to greyscale but retain 3-channels
 	public static BufferedImage convert2grey(BufferedImage image) {
+
+		
 		BufferedImage grey = new BufferedImage(image.getWidth(),
 				image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
 		Graphics g = grey.getGraphics();
 		g.drawImage(image, 0, 0, null);
 		g.dispose();
+		
+		
+		
 		BufferedImage rgb = new BufferedImage(image.getWidth(),
 				image.getHeight(), BufferedImage.TYPE_INT_RGB);
 		g = rgb.getGraphics();
 		g.drawImage(grey, 0, 0, null);
 		g.dispose();
+		
 		return rgb;
 	}
 

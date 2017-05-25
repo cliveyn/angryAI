@@ -4,7 +4,7 @@ import java.awt.Point;
 import java.util.LinkedList;
 import java.util.List;
 
-import ab.demo.other.Shot;
+import src.ab.demo.other.Shot;
 import ab.planner.TrajectoryPlanner;
 import ab.vision.ABObject;
 import ab.vision.Vision;

@@ -71,6 +71,44 @@ public class StateUtil {
 	 * @return score: the current score.
 	 * 
 	 * */
+	
+	public static int getCurrentScore(Proxy proxy){
+		int score = -1;
+		int Newscore = -1;
+		GameStateExtractor gameStateExtractor = new GameStateExtractor();
+		
+		do{
+			score = Newscore;
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			if(getGameState(proxy) == GameState.WON)
+			{	
+				int final_score = _getScore(proxy);
+				System.out.println("Score: " + final_score + "(won)");
+				return final_score;
+			}
+			
+			byte[] imageBytes = proxy.send(new ProxyScreenshotMessage());
+			BufferedImage image = null;
+			try {
+				image = ImageIO.read(new ByteArrayInputStream(imageBytes));
+			} 
+				catch (IOException e) {
+				e.printStackTrace();
+			}
+			Newscore = gameStateExtractor.getScoreInGame(image);
+			System.out.println("Score: " + Newscore);
+		}while (score != Newscore); 
+        
+		if(score == -1)
+	    	   System.out.println(" Game score is unavailable "); 	   
+			return score;		
+	}
+	
 	public static int getScore(Proxy proxy)
 	{
 

@@ -6,7 +6,7 @@
 **This work is licensed under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 **To view a copy of this license, visit http://www.gnu.org/licenses/
  *****************************************************************************/
-package ab.demo;
+package src.ab.demo;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import ab.demo.other.ClientActionRobot;
-import ab.demo.other.ClientActionRobotJava;
+import src.ab.demo.other.ClientActionRobot;
+import src.ab.demo.other.ClientActionRobotJava;
 import ab.planner.TrajectoryPlanner;
 import ab.vision.ABObject;
 import ab.vision.GameStateExtractor.GameState;

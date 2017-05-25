@@ -23,8 +23,8 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import src.ab.demo.other.ActionRobot;
 import Jama.Matrix;
-import ab.demo.other.ActionRobot;
 import ab.server.Proxy;
 import ab.server.proxy.message.ProxyScreenshotMessage;
 import ab.utils.ImageSegFrame;
@@ -35,6 +35,7 @@ public class ShowSeg implements Runnable {
 	private static List<Rectangle> pigs, redBirds, blueBirds, yellowBirds, blackBirds, whiteBirds, iceBlocks, woodBlocks, stoneBlocks, TNTs;
 	private static List<Point> trajPoints;
 	public  static boolean useRealshape = false;
+	public static boolean drawState = false;
 	private static VisionRealShape vision;
 	static public Proxy getGameConnection(int port) {
 		Proxy proxy = null;
@@ -104,6 +105,23 @@ public class ShowSeg implements Runnable {
 		return screenshot;
 			
 	}
+	
+	public static BufferedImage drawState(BufferedImage screenshot){
+		// get game state
+		GameStateExtractor game = new GameStateExtractor();
+		GameStateExtractor.GameState state = game.getGameState(screenshot);
+		if (state != GameStateExtractor.GameState.PLAYING) {
+			screenshot = VisionUtils.convert2grey(screenshot);
+			return screenshot;
+		}
+		
+		// process image
+		Vision vision = new Vision(screenshot);
+		screenshot = VisionUtils.getStateImg(vision.getMBRVision()._scene);
+		return screenshot;
+	}
+	
+	
 	public static BufferedImage drawMBRs(BufferedImage screenshot) {
 
 
@@ -129,12 +147,17 @@ public class ShowSeg implements Runnable {
 		blackBirds = vision.getMBRVision().findBlackBirdsMBRs();
 		TNTs = vision.getMBRVision().findTNTsMBR();
 		trajPoints = vision.findTrajPoints();
-
+		
+		List<Rectangle> boxes = vision.getMBRVision().findBoxesMBRs();
+		
 		Rectangle sling = vision.findSlingshotMBR();
 
 
 		// draw objects
 		screenshot = VisionUtils.convert2grey(screenshot);
+		
+		//VisionUtils.drawBoundingBoxes(screenshot, boxes, Color.BLACK);
+		
 		VisionUtils.drawBoundingBoxes(screenshot, pigs, Color.GREEN);
 		VisionUtils.drawBoundingBoxes(screenshot, redBirds, Color.RED);
 		VisionUtils.drawBoundingBoxes(screenshot, blueBirds, Color.BLUE);
@@ -277,10 +300,16 @@ public class ShowSeg implements Runnable {
 			// analyse and show image
 			//int[][] meta = computeMetaInformation(screenshot);
 		    
-		    if(!useRealshape)
+		    
+		    
+		    if(drawState) 
+		    	screenshot = drawState(screenshot);
+		    else if(!useRealshape)
 		    	screenshot = drawMBRs(screenshot);
 		    else
 		    	screenshot = drawRealshape(screenshot);
+		    		    
+		    
 		    
 			if (frame == null) {
 

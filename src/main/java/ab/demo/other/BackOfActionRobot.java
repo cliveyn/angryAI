@@ -35,7 +35,7 @@ import ab.vision.Vision;
  * Util class for basic functions
  * 
  */
-public class ActionRobot {
+public class BackOfActionRobot {
 	public static Proxy proxy;
 	public String level_status = "UNKNOWN";
 	public int current_score = 0;
@@ -72,7 +72,7 @@ public class ActionRobot {
 
 	// A java util class for the standalone version. It provides common
 	// functions an agent would use. E.g. get the screenshot
-	public ActionRobot() {
+	public BackOfActionRobot() {
 		lls = new LoadLevelSchema(proxy);
 		rls = new RestartLevelSchema(proxy);
 	}
@@ -134,7 +134,7 @@ public class ActionRobot {
 		System.out
 				.println("wait 15 seconds to ensure all objects in the scene static");
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(15000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -148,7 +148,7 @@ public class ActionRobot {
 		ss.shoot(proxy, shots);
 		System.out.println("Shooting Completed");
 		try {
-			Thread.sleep(7000);
+			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
@@ -195,7 +195,7 @@ public class ActionRobot {
 			proxy.send(new ProxyMouseWheelMessage(-1));
 		}
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -207,7 +207,7 @@ public class ActionRobot {
 			proxy.send(new ProxyMouseWheelMessage(1));
 		}
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -257,13 +257,13 @@ public class ActionRobot {
 	public static void main(String args[]) {
 
 		long time = System.currentTimeMillis();
-		ActionRobot.doScreenShot();
+		BackOfActionRobot.doScreenShot();
 		time = System.currentTimeMillis() - time;
 		System.out.println(" cost: " + time);
 		time = System.currentTimeMillis();
 		int count = 0;
 		while (count < 40) {
-			ActionRobot.doScreenShot();
+			BackOfActionRobot.doScreenShot();
 			count++;
 		}
 
@@ -274,6 +274,6 @@ public class ActionRobot {
 	}
 
 	public int getScore() {
-		return StateUtil.getScore(ActionRobot.proxy);
+		return StateUtil.getScore(BackOfActionRobot.proxy);
 	}
 }
