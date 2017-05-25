@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import src.ab.demo.other.ActionRobot;
+import ab.demo.other.ActionRobot;
 import ab.vision.real.ConnectedComponent;
 import ab.vision.real.ImageSegmenter;
 import ab.vision.real.shape.Body;

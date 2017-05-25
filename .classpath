@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="external"/>
+	<classpathentry kind="lib" path="external/WebSocket.jar"/>
+	<classpathentry kind="lib" path="external/commons-codec-1.7.jar"/>
+	<classpathentry kind="lib" path="external/Jama-1.0.2.jar"/>
+	<classpathentry kind="lib" path="external/jar-in-jar-loader.zip"/>
+	<classpathentry kind="lib" path="external/json-simple-1.1.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

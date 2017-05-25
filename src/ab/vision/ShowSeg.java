@@ -23,7 +23,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import src.ab.demo.other.ActionRobot;
+import ab.demo.other.ActionRobot;
 import Jama.Matrix;
 import ab.server.Proxy;
 import ab.server.proxy.message.ProxyScreenshotMessage;

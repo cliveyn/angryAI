@@ -7,7 +7,7 @@
 **To view a copy of this license, visit http://www.gnu.org/licenses/
 *****************************************************************************/
 
-package src.external;
+package external;
 /**
  * This class maintains all the client messages and its corresponding MIDs.
  * */

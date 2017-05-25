@@ -1,4 +1,4 @@
-package src.ab.demo;
+package ab.demo;
 
 import ab.planner.abTrajectory;
 import ab.utils.GameImageRecorder;
@@ -13,7 +13,7 @@ import ab.vision.ShowSeg;
 **To view a copy of this license, visit http://www.gnu.org/licenses/
  *****************************************************************************/
 
-public class MainEntry {
+public class MainEntry_bak {
 	// the entry of the software.
 	public static void main(String args[])
 	{
@@ -23,7 +23,7 @@ public class MainEntry {
 			command = args[0];
 			if (args.length == 1 && command.equalsIgnoreCase("-na"))
 			{
-				MFCAgent na = new MFCAgent();
+				NaiveAgent na = new NaiveAgent();
 				na.run();
 			}
 			else
@@ -60,7 +60,7 @@ public class MainEntry {
 							else 
 						if (args.length == 2 && command.equalsIgnoreCase("-na"))
 						{
-							MFCAgent na = new MFCAgent();
+							NaiveAgent na = new NaiveAgent();
 							if(! (args[1].equalsIgnoreCase("-showMBR") || args[1].equals("-showReal")))
 							{
 								int initialLevel = 1;
@@ -86,7 +86,7 @@ public class MainEntry {
 						} 
 						else if (args.length == 3 && (args[2].equalsIgnoreCase("-showMBR") || args[2].equalsIgnoreCase("-showReal") || args[2].equalsIgnoreCase("-showState")) && command.equalsIgnoreCase("-na"))
 						{
-							MFCAgent na = new MFCAgent();
+							NaiveAgent na = new NaiveAgent();
 							int initialLevel = 1;
 							try{
 								initialLevel = Integer.parseInt(args[1]);
