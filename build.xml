@@ -20,7 +20,7 @@
         <jar destfile="ABSoftware.jar">
             <manifest>
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
-                <attribute name="Rsrc-Main-Class" value="ab.demo.MainEntry"/>
+                <attribute name="Rsrc-Main-Class" value="src.ab.demo.MainEntry"/>
                 <attribute name="Class-Path" value="."/>
                 <attribute name="Rsrc-Class-Path" value="./ Jama-1.0.2.jar json-simple-1.1.1.jar WebSocket.jar commons-codec-1.7.jar"/>
             </manifest>

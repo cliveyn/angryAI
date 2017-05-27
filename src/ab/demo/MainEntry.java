@@ -23,7 +23,7 @@ public class MainEntry {
 			command = args[0];
 			if (args.length == 1 && command.equalsIgnoreCase("-na"))
 			{
-				MFCAgent na = new MFCAgent();
+				MFECAgent na = new MFECAgent();
 				na.run();
 			}
 			else
@@ -60,7 +60,7 @@ public class MainEntry {
 							else 
 						if (args.length == 2 && command.equalsIgnoreCase("-na"))
 						{
-							MFCAgent na = new MFCAgent();
+							MFECAgent na = new MFECAgent();
 							if(! (args[1].equalsIgnoreCase("-showMBR") || args[1].equals("-showReal")))
 							{
 								int initialLevel = 1;
@@ -86,7 +86,7 @@ public class MainEntry {
 						} 
 						else if (args.length == 3 && (args[2].equalsIgnoreCase("-showMBR") || args[2].equalsIgnoreCase("-showReal") || args[2].equalsIgnoreCase("-showState")) && command.equalsIgnoreCase("-na"))
 						{
-							MFCAgent na = new MFCAgent();
+							MFECAgent na = new MFECAgent();
 							int initialLevel = 1;
 							try{
 								initialLevel = Integer.parseInt(args[1]);

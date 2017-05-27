@@ -80,7 +80,7 @@ public class StateUtil {
 		do{
 			score = Newscore;
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -88,7 +88,7 @@ public class StateUtil {
 			if(getGameState(proxy) == GameState.WON)
 			{	
 				int final_score = _getScore(proxy);
-				System.out.println("Score: " + final_score + "(won)");
+				//System.out.println("Score: " + final_score + "(won)");
 				return final_score;
 			}
 			
@@ -101,7 +101,7 @@ public class StateUtil {
 				e.printStackTrace();
 			}
 			Newscore = gameStateExtractor.getScoreInGame(image);
-			System.out.println("Score: " + Newscore);
+			//System.out.println("Score: " + Newscore);
 		}while (score != Newscore); 
         
 		if(score == -1)
