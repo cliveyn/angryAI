@@ -11,12 +11,15 @@ package ab.demo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,6 +62,10 @@ public class MFECAgent implements Runnable {
 	
 	public double gamma = 1;
 	public ArrayList<Integer> rewardHist = new ArrayList<Integer>();
+	public ArrayList<String> stateHist = new ArrayList<String>();
+	public ArrayList<Double> actionHist = new ArrayList<Double>();
+	
+	public ArrayList<Integer> totalRewardHist = new ArrayList<Integer>();
 	
 	// a standalone implementation of the Naive Agent
 	public MFECAgent() {
@@ -75,17 +82,17 @@ public class MFECAgent implements Runnable {
 			double action = Math.round(x*10.0)/10.0;
 			ADic_Ag.put(action, new HashMap<String,Integer>()); 
 		}
- 		
-		 /*try
-		  //기존의 Adic 읽어들이기
+
+		//기존의  Adic 읽어들이기
+		 try
 	      {
-	         FileInputStream fis = new FileInputStream("AdicMap_Ep1_2200.data");
+	         FileInputStream fis = new FileInputStream("AdicMap_300.data");
 	         ObjectInputStream ois = new ObjectInputStream(fis);
 	         ADic_Ag = (HashMap<Double, HashMap<String, Integer>>) ois.readObject();
 	         ois.close();
 	         fis.close();
 	         
-	         FileInputStream fis2 = new FileInputStream("str2arrayDic_Ep1_2200.data");
+	         FileInputStream fis2 = new FileInputStream("str2arrayDic_300.data");
 	         ObjectInputStream ois2 = new ObjectInputStream(fis2);
 	         strToarrayStateDic = (HashMap<String,int[][]>) ois2.readObject();
 	         ois2.close();
@@ -97,12 +104,38 @@ public class MFECAgent implements Runnable {
 	      {
 	         System.out.println("File not found");
 	         c.printStackTrace();
-	      }*/
-		 
+	      }
 		 
 		ActionRobot.GoFromMainMenuToLevelSelection();
 	}
 
+	public void learn(){
+		System.out.println("####### End of Level. Let's learn! #######");
+		/* ############## Start Learning ##############*/
+		for(int t = rewardHist.size(); t>0;t--){
+			double action = actionHist.get(t-1);
+			String statestr = stateHist.get(t-1);
+			int cummReward = 0;
+			for(int i = t; i>0;i--) cummReward += rewardHist.get(i-1)*Math.pow(gamma, t-i);
+			
+			System.out.print("At timestep "+t+", for state: " + strToarrayStateDic.get(statestr).toString() + ", action: "+action+ ", ");
+			if(ADic_Ag.get(action).containsKey(statestr)){
+				int prevReward = ADic_Ag.get(action).get(statestr);
+				if(prevReward < cummReward)
+					System.out.println("reward is updated from " + prevReward + " to : "+cummReward);
+					ADic_Ag.get(action).put(statestr, cummReward);
+			}else{
+				System.out.println("new reward is saved as : "+cummReward);
+				ADic_Ag.get(action).put(statestr, cummReward);
+			}
+		}
+		/*############## End Learning ############## */
+		
+		rewardHist.clear(); // reward history 초기화
+		prevScore  = 0; // previous score 초기화
+		stateHist.clear(); // state history 초기화
+		actionHist.clear(); // action history 초기화
+	}
 	
 	// run the client
 	public void run() {
@@ -115,9 +148,10 @@ public class MFECAgent implements Runnable {
 				try {
 					Thread.sleep(3000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				this.learn();
+				
 				int score = StateUtil.getScore(ActionRobot.proxy);
 				if(!scores.containsKey(currentLevel)) scores.put(currentLevel, score);
 				else if(scores.get(currentLevel) < score) scores.put(currentLevel, score);
@@ -128,7 +162,8 @@ public class MFECAgent implements Runnable {
 				}
 				System.out.println("Total Score: " + totalScore);
 				
-				//if(currentLevel==21) currentLevel = 0; //Episode 1에 대해서만 계속 반복함!
+				if(currentLevel==21) currentLevel = 0; // map1애 대해서만
+				
 				aRobot.loadLevel(++currentLevel);
 				
 				// make a new trajectory planner whenever a new level is entered
@@ -136,13 +171,35 @@ public class MFECAgent implements Runnable {
 
 				// first shot on this level, try high shot first
 				firstShot = true;
-				prevScore  = 0;
 			} else if (state == GameState.LOST) {
-				System.out.println("Lost... Restart the episode");
-				prevScore  = 0;
-				scores = new LinkedHashMap<Integer,Integer>(); // Total score 초기화
-				aRobot.loadLevel(1);
-				//aRobot.restartLevel();
+				this.learn();
+				
+				/*//Write total reward history as a txt file
+				int totalReward = 0;
+				for(Integer key: scores.keySet()) totalReward += scores.get(key);
+				totalRewardHist.add(totalReward);
+				try {
+					PrintWriter writer = new PrintWriter("totalRewardHistory.txt", "UTF-8");
+					for(int reward:totalRewardHist) writer.println(reward);
+				    writer.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}*/
+				
+				//print size of states
+				int sizeADic = 0;
+				for(double i = 0; i<10;i++){
+					for(double j = 0;j<80; j++){
+						double action = j+i*0.1;
+						action = Math.round(action*10.0)/10.0;
+						HashMap<String, Integer> SRDic = ADic_Ag.get(action);
+						sizeADic += SRDic.size();
+					}
+				}
+				System.out.println("Number of states collected: " + sizeADic);
+				
+				System.out.println("####### Restart this level #######");
+				aRobot.restartLevel();
 			} else if (state == GameState.LEVEL_SELECTION) {
 				System.out
 				.println("Unexpected level selection page, go to the last current level : "
@@ -201,7 +258,6 @@ public class MFECAgent implements Runnable {
 				int dx,dy;
 				
 				int[][] MFCstate = vision.getMBRVision().findMFCState();
-				System.out.println("Current state : "+ MFCstate.toString());
 				
 				String MFCstateStr = "";
 				for(int i = 0 ; i < MFCstate.length;i++){
@@ -223,13 +279,18 @@ public class MFECAgent implements Runnable {
 				
 				useMFC = true;
 				double ag = -1;
-				ag = getAction(MFCstateStr);		// 주석처리 될 경우 explore만 하는 것.		
+				ag = getAction(MFCstateStr);	
 				System.out.println("Best chosen angle : "+ ag);
 				
 				
 				if (randomGenerator.nextInt(2)==0 || ag <0){
 				//if (ag <0){
 					useMFC = false;
+					
+					//greedy 목표물로 block들도 추가.
+					List<ABObject> blocks = vision.findBlocksMBR();
+					pigs.addAll(blocks);
+					
 					// random pick up a pig
 					ABObject pig = pigs.get(randomGenerator.nextInt(pigs.size()));
 					_tpt = pig.getCenter();// if the target is very close to before, randomly choose a
@@ -250,12 +311,11 @@ public class MFECAgent implements Runnable {
 					prevTarget = new Point(_tpt.x, _tpt.y);
 					// estimate the trajectory
 					ArrayList<Point> pts = tp.estimateLaunchPoint(sling, _tpt);
-
+					
 					// do a high shot when entering a level to find an accurate velocity
 					if (firstShot && pts.size() > 1) releasePoint = pts.get(1);
 					else if (pts.size() == 1) releasePoint = pts.get(0);
 					else if (pts.size() == 2){
-						// randomly choose between the trajectories, with a 1 in 6 chance of choosing the high one
 						if (randomGenerator.nextInt(6) ==0) releasePoint = pts.get(1);
 						else releasePoint = pts.get(0);
 					}
@@ -263,7 +323,11 @@ public class MFECAgent implements Runnable {
 							System.out.println("No release point found for the target");
 							System.out.println("Try a shot with 45 degree");
 								releasePoint = tp.findReleasePoint(sling, Math.PI/4);
-					}				
+					}
+					
+					//Do not make a minus angle shot
+					if(Math.toDegrees(tp.getReleaseAngle(sling, releasePoint))<0) 
+						releasePoint = tp.findReleasePoint(sling, Math.PI/4);
 				}
 					
 				// Get the reference point
@@ -277,17 +341,15 @@ public class MFECAgent implements Runnable {
 					int tapInterval = 0;
 					switch (aRobot.getBirdTypeOnSling()){
 						case RedBird:
-							tapInterval = 0; break;               // start of trajectory
+							tapInterval = 0; break; 
 						case YellowBird:
-							tapInterval = 65 + randomGenerator.nextInt(25);break; // 65-90% of the way
+							tapInterval = 75; break;
 						case WhiteBird:
-							tapInterval =  70 + randomGenerator.nextInt(20);break; // 70-90% of the way
+							tapInterval =  85; break;
 						case BlackBird:
-							tapInterval =  90 + randomGenerator.nextInt(9);
-							System.out.println("Black bird tapInterval : "+tapInterval+"%");
-							break; // 90-99% of the way
+							tapInterval =  95; break;
 						case BlueBird:
-							tapInterval =  65 + randomGenerator.nextInt(20);break; // 65-85% of the way
+							tapInterval =  75; break;
 						default:
 							tapInterval =  60;
 					}
@@ -321,38 +383,27 @@ public class MFECAgent implements Runnable {
 							if(dx < 0)
 							{
 								aRobot.cshoot(shot);
-								System.out.println("Previous Score: "+prevScore);
 								int currentScore = StateUtil.getCurrentScore(ActionRobot.proxy);
-								System.out.println("Current Score: "+currentScore);
+								if(currentScore ==0) currentScore = prevScore;
+								System.out.println("Previous Score: "+prevScore+", Current Score: "+currentScore);
 								state = aRobot.getState();
 								
 								if(currentScore >=prevScore){
+									/* State */
+									stateHist.add(MFCstateStr);
+									
 									/* Reward */
 									int currentReward = currentScore - prevScore;
 									prevScore = prevScore + currentReward;
+									System.out.println("Current Reward: "+currentReward);
 									rewardHist.add(currentReward);
-									int cummReward = 0;
-									for(int i = rewardHist.size(); i>0;i--){
-										cummReward += rewardHist.get(i-1)*Math.pow(gamma, rewardHist.size()-i);
-									}
-									System.out.println("Cummulated reward: "+cummReward);
 									
 									/* Action */
 									double thisAction = Math.toDegrees(tp.getReleaseAngle(sling, releasePoint));
 									if(useMFC) thisAction = ag;
 									else thisAction = Math.round(thisAction*10.0)/10.0;
-									
-									System.out.print("For state " + MFCstate.toString() + ", action "+thisAction+ ", ");
-									if(ADic_Ag.get(thisAction).containsKey(MFCstateStr)){
-										int prevReward = ADic_Ag.get(thisAction).get(MFCstateStr);
-										//if(prevReward < cummReward || currentReward ==0)
-										if(prevReward < cummReward)
-											ADic_Ag.get(thisAction).put(MFCstateStr, cummReward);
-											System.out.println("reward is updated from " + prevReward + "to : "+cummReward);
-									}else{
-										ADic_Ag.get(thisAction).put(MFCstateStr, cummReward);
-										System.out.println("new reward saved as : "+cummReward);
-									}
+									actionHist.add(thisAction);
+
 								}
 								
 								/*//Print Action size
@@ -366,23 +417,14 @@ public class MFECAgent implements Runnable {
 									}
 									System.out.println();
 								}*/
-								int sizeADic = 0;
-								for(double i = 0; i<10;i++){
-									for(double j = 0;j<80; j++){
-										double action = j+i*0.1;
-										action = Math.round(action*10.0)/10.0;
-										HashMap<String, Integer> SRDic = ADic_Ag.get(action);
-										sizeADic += SRDic.size();
-									}
-								}
-								System.out.println("Number of states collected: " + sizeADic);
+								
 								System.out.println("Timestamp : "+numTimestamp);
 								numTimestamp++;
 								
-								if(numTimestamp % 50==0){
+								if(numTimestamp % 100 ==0){
 									try{
-						                  FileOutputStream fos =
-						                     new FileOutputStream("AdicMap_"+numTimestamp+".data");
+						                  //FileOutputStream fos = new FileOutputStream("AdicMap_"+numTimestamp+".data");
+						                  FileOutputStream fos = new FileOutputStream("AdicMap_"+(numTimestamp+300)+".data");
 						                  ObjectOutputStream oos = new ObjectOutputStream(fos);
 						                  oos.writeObject(ADic_Ag);
 						                  oos.close();
@@ -393,8 +435,8 @@ public class MFECAgent implements Runnable {
 							           }
 									
 									try{
-						                  FileOutputStream fos =
-						                     new FileOutputStream("str2arrayDic_"+numTimestamp+".data");
+										  //FileOutputStream fos = new FileOutputStream("str2arrayDic_"+numTimestamp+".data");  
+										  FileOutputStream fos = new FileOutputStream("str2arrayDic_"+(numTimestamp+300)+".data");
 						                  ObjectOutputStream oos = new ObjectOutputStream(fos);
 						                  oos.writeObject(strToarrayStateDic);
 						                  oos.close();
@@ -480,6 +522,7 @@ public class MFECAgent implements Runnable {
 					expectedReward = rewardSum/n;
 				}
 			}
+			 
 			if (expectedReward > maxReward){
 				maxReward = expectedReward;
 				System.out.println("New best angle is " + action.toString() + "(E(reward): "+maxReward+")");

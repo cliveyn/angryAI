@@ -77,36 +77,44 @@ public class StateUtil {
 		int Newscore = -1;
 		GameStateExtractor gameStateExtractor = new GameStateExtractor();
 		
+		byte[] imageBytes = proxy.send(new ProxyScreenshotMessage());
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(new ByteArrayInputStream(imageBytes));
+		} 
+			catch (IOException e) {
+			e.printStackTrace();
+		}
+		Newscore = gameStateExtractor.getScoreInGame(image);
+		
 		do{
 			score = Newscore;
 			try {
-				Thread.sleep(3000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			
 			if(getGameState(proxy) == GameState.WON)
 			{	
-				int final_score = _getScore(proxy);
-				//System.out.println("Score: " + final_score + "(won)");
-				return final_score;
+				Newscore = _getScore(proxy);
+			}else if (getGameState(proxy) == GameState.LOST ){
+				return 0;
+			}else{
+				imageBytes = proxy.send(new ProxyScreenshotMessage());
+				image = null;
+				try {
+					image = ImageIO.read(new ByteArrayInputStream(imageBytes));
+				} 
+					catch (IOException e) {
+					e.printStackTrace();
+				}
+				Newscore = gameStateExtractor.getScoreInGame(image);
 			}
-			
-			byte[] imageBytes = proxy.send(new ProxyScreenshotMessage());
-			BufferedImage image = null;
-			try {
-				image = ImageIO.read(new ByteArrayInputStream(imageBytes));
-			} 
-				catch (IOException e) {
-				e.printStackTrace();
-			}
-			Newscore = gameStateExtractor.getScoreInGame(image);
-			//System.out.println("Score: " + Newscore);
 		}while (score != Newscore); 
         
-		if(score == -1)
-	    	   System.out.println(" Game score is unavailable "); 	   
-			return score;		
+		if(score == -1) System.out.println(" Game score is unavailable "); 	   
+		return score;		
 	}
 	
 	public static int getScore(Proxy proxy)
