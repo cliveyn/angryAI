@@ -245,8 +245,8 @@ public class TrajectoryPlanner {
         double pullback = _scale * STRETCH * Math.cos(_theta);
         double distance = (tapPoint.x - _ref.x + pullback) / _scale;
         
-        System.out.println("distance " + distance);
-        System.out.println("velocity " + _ux);
+        //System.out.println("distance " + distance);
+        //System.out.println("velocity " + _ux);
         
         return (int)(distance / _ux * _timeUnit);
     }

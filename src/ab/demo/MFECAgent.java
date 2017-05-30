@@ -58,7 +58,7 @@ public class MFECAgent implements Runnable {
 	public static HashMap<String,int[][]> strToarrayStateDic;
 	public int numTimestamp = 0;
 	private int prevScore;
-	public boolean useMFC = true; 
+	public boolean useMFEC = true; 
 	
 	public double gamma = 1;
 	public ArrayList<Integer> rewardHist = new ArrayList<Integer>();
@@ -66,10 +66,10 @@ public class MFECAgent implements Runnable {
 	public ArrayList<Double> actionHist = new ArrayList<Double>();
 	
 	public ArrayList<Integer> totalRewardHist = new ArrayList<Integer>();
+	public boolean trainingFlag = true;
 	
 	// a standalone implementation of the Naive Agent
 	public MFECAgent() {
-		
 		aRobot = new ActionRobot();
 		tp = new TrajectoryPlanner();
 		prevTarget = null;
@@ -84,7 +84,7 @@ public class MFECAgent implements Runnable {
 		}
 
 		//기존의  Adic 읽어들이기
-		 try
+		 /*try
 	      {
 	         FileInputStream fis = new FileInputStream("AdicMap_300.data");
 	         ObjectInputStream ois = new ObjectInputStream(fis);
@@ -104,7 +104,7 @@ public class MFECAgent implements Runnable {
 	      {
 	         System.out.println("File not found");
 	         c.printStackTrace();
-	      }
+	      }*/
 		 
 		ActionRobot.GoFromMainMenuToLevelSelection();
 	}
@@ -130,7 +130,6 @@ public class MFECAgent implements Runnable {
 			}
 		}
 		/*############## End Learning ############## */
-		
 		rewardHist.clear(); // reward history 초기화
 		prevScore  = 0; // previous score 초기화
 		stateHist.clear(); // state history 초기화
@@ -143,7 +142,6 @@ public class MFECAgent implements Runnable {
 		
 		while (true) {
 			GameState state = solve();
-			
 			if (state == GameState.WON) {
 				try {
 					Thread.sleep(3000);
@@ -153,27 +151,32 @@ public class MFECAgent implements Runnable {
 				this.learn();
 				
 				int score = StateUtil.getScore(ActionRobot.proxy);
-				if(!scores.containsKey(currentLevel)) scores.put(currentLevel, score);
+				System.out.println("Current score: "+score);
+				
+				/*if(!scores.containsKey(currentLevel)) scores.put(currentLevel, score);
 				else if(scores.get(currentLevel) < score) scores.put(currentLevel, score);
 				int totalScore = 0;
 				for(Integer key: scores.keySet()){
 					totalScore += scores.get(key);
 					System.out.println(" Level " + key + " Score: " + scores.get(key) + " ");
 				}
-				System.out.println("Total Score: " + totalScore);
+				System.out.println("Total Score: " + totalScore);*/
+				//if(currentLevel==21) currentLevel = 0; // map1애 대해서만
 				
-				if(currentLevel==21) currentLevel = 0; // map1애 대해서만
-				
-				aRobot.loadLevel(++currentLevel);
+				if(trainingFlag){
+					trainingFlag = false;
+					aRobot.loadLevel(currentLevel);
+				}else{
+					trainingFlag = true;
+					aRobot.loadLevel(++currentLevel);
+				}
 				
 				// make a new trajectory planner whenever a new level is entered
 				tp = new TrajectoryPlanner();
-
 				// first shot on this level, try high shot first
 				firstShot = true;
-			} else if (state == GameState.LOST) {
-				this.learn();
 				
+			} else if (state == GameState.LOST) {
 				/*//Write total reward history as a txt file
 				int totalReward = 0;
 				for(Integer key: scores.keySet()) totalReward += scores.get(key);
@@ -186,6 +189,7 @@ public class MFECAgent implements Runnable {
 					e.printStackTrace();
 				}*/
 				
+				/*
 				//print size of states
 				int sizeADic = 0;
 				for(double i = 0; i<10;i++){
@@ -197,6 +201,10 @@ public class MFECAgent implements Runnable {
 					}
 				}
 				System.out.println("Number of states collected: " + sizeADic);
+				*/
+				
+				this.learn();
+				if(!trainingFlag) trainingFlag = true;
 				
 				System.out.println("####### Restart this level #######");
 				aRobot.restartLevel();
@@ -258,7 +266,6 @@ public class MFECAgent implements Runnable {
 				int dx,dy;
 				
 				int[][] MFCstate = vision.getMBRVision().findMFCState();
-				
 				String MFCstateStr = "";
 				for(int i = 0 ; i < MFCstate.length;i++){
 					for(int j = 0; j < MFCstate[i].length; j++){
@@ -277,15 +284,17 @@ public class MFECAgent implements Runnable {
 					strToarrayStateDic.put(MFCstateStr, MFCstate);
 				}
 				
-				useMFC = true;
+				useMFEC = true;
 				double ag = -1;
 				ag = getAction(MFCstateStr);	
 				System.out.println("Best chosen angle : "+ ag);
+				if(ag<0) trainingFlag = true;
 				
-				
-				if (randomGenerator.nextInt(2)==0 || ag <0){
+				//if (randomGenerator.nextInt(2)==0 || ag <0){
 				//if (ag <0){
-					useMFC = false;
+				if(trainingFlag){
+					System.out.println("Training phase");
+					useMFEC = false;
 					
 					//greedy 목표물로 block들도 추가.
 					List<ABObject> blocks = vision.findBlocksMBR();
@@ -294,7 +303,7 @@ public class MFECAgent implements Runnable {
 					// random pick up a pig
 					ABObject pig = pigs.get(randomGenerator.nextInt(pigs.size()));
 					_tpt = pig.getCenter();// if the target is very close to before, randomly choose a
-					System.out.println("e-Greedy, randomly Pick up a pig dest : " + _tpt.toString());
+					//System.out.println("e-Greedy, randomly Pick up a pig dest : " + _tpt.toString());
 					
 					// point near it
 					if (prevTarget != null && distance(prevTarget, _tpt) < 10) {
@@ -303,6 +312,8 @@ public class MFECAgent implements Runnable {
 						_tpt.y = _tpt.y + (int) (Math.sin(_angle) * 10);
 						System.out.println("Randomly changing to " + _tpt);
 					}
+				}else{
+					System.out.println("Test phase");
 				}
 				
 				if (_tpt == null){
@@ -316,7 +327,7 @@ public class MFECAgent implements Runnable {
 					if (firstShot && pts.size() > 1) releasePoint = pts.get(1);
 					else if (pts.size() == 1) releasePoint = pts.get(0);
 					else if (pts.size() == 2){
-						if (randomGenerator.nextInt(6) ==0) releasePoint = pts.get(1);
+						if (randomGenerator.nextInt(2) ==0) releasePoint = pts.get(1);
 						else releasePoint = pts.get(0);
 					}
 					else if(pts.isEmpty()){
@@ -363,11 +374,10 @@ public class MFECAgent implements Runnable {
 					dy = (int)releasePoint.getY() - refPoint.y;
 					shot = new Shot(refPoint.x, refPoint.y, dx, dy, 0, tapTime);
 				}
-				else
-					{
-						System.err.println("No Release Point Found");
-						return state;
-					}
+				else{
+					System.err.println("No Release Point Found");
+					return state;
+				}
 
 				// check whether the slingshot is changed. the change of the slingshot indicates a change in the scale.
 				{
@@ -400,7 +410,7 @@ public class MFECAgent implements Runnable {
 									
 									/* Action */
 									double thisAction = Math.toDegrees(tp.getReleaseAngle(sling, releasePoint));
-									if(useMFC) thisAction = ag;
+									if(useMFEC) thisAction = ag;
 									else thisAction = Math.round(thisAction*10.0)/10.0;
 									actionHist.add(thisAction);
 
@@ -423,8 +433,7 @@ public class MFECAgent implements Runnable {
 								
 								if(numTimestamp % 100 ==0){
 									try{
-						                  //FileOutputStream fos = new FileOutputStream("AdicMap_"+numTimestamp+".data");
-						                  FileOutputStream fos = new FileOutputStream("AdicMap_"+(numTimestamp+300)+".data");
+						                  FileOutputStream fos = new FileOutputStream("AdicMap_"+numTimestamp+".data");
 						                  ObjectOutputStream oos = new ObjectOutputStream(fos);
 						                  oos.writeObject(ADic_Ag);
 						                  oos.close();
@@ -435,8 +444,7 @@ public class MFECAgent implements Runnable {
 							           }
 									
 									try{
-										  //FileOutputStream fos = new FileOutputStream("str2arrayDic_"+numTimestamp+".data");  
-										  FileOutputStream fos = new FileOutputStream("str2arrayDic_"+(numTimestamp+300)+".data");
+										  FileOutputStream fos = new FileOutputStream("str2arrayDic_"+numTimestamp+".data");  
 						                  ObjectOutputStream oos = new ObjectOutputStream(fos);
 						                  oos.writeObject(strToarrayStateDic);
 						                  oos.close();
@@ -487,7 +495,7 @@ public class MFECAgent implements Runnable {
 	}
 	
 	public static double getAction(String state){
-		int n = 5;
+		int n = 3;
 		int maxReward = -1;
 		double bestAction = -1;
 		int[][] arrayState1 = strToarrayStateDic.get(state); 
