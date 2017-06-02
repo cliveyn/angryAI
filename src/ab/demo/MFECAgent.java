@@ -53,10 +53,9 @@ public class MFECAgent implements Runnable {
 	private Map<Integer,Integer> scores = new LinkedHashMap<Integer,Integer>();
 	TrajectoryPlanner tp;
 	private boolean firstShot;
-	private Point prevTarget;
 	public static HashMap<Double, HashMap<String, Integer>> ADic_Ag;
 	public static HashMap<String,int[][]> strToarrayStateDic;
-	public int numTimestamp = 0;
+	public int numTimestamp = 5800;
 	private int prevScore;
 	public boolean useMFEC = true; 
 	
@@ -66,13 +65,12 @@ public class MFECAgent implements Runnable {
 	public ArrayList<Double> actionHist = new ArrayList<Double>();
 	
 	public ArrayList<Integer> totalRewardHist = new ArrayList<Integer>();
-	public boolean trainingFlag = true;
+	public boolean trainingFlag = false;
 	
 	// a standalone implementation of the Naive Agent
 	public MFECAgent() {
 		aRobot = new ActionRobot();
 		tp = new TrajectoryPlanner();
-		prevTarget = null;
 		firstShot = true;
 		randomGenerator = new Random();
  		
@@ -83,16 +81,16 @@ public class MFECAgent implements Runnable {
 			ADic_Ag.put(action, new HashMap<String,Integer>()); 
 		}
 
-		//기존의  Adic 읽어들이기
-		 /*try
+		// Read previous dic
+		 try
 	      {
-	         FileInputStream fis = new FileInputStream("AdicMap_300.data");
+	         FileInputStream fis = new FileInputStream("AdicMap_5800.data");
 	         ObjectInputStream ois = new ObjectInputStream(fis);
 	         ADic_Ag = (HashMap<Double, HashMap<String, Integer>>) ois.readObject();
 	         ois.close();
 	         fis.close();
 	         
-	         FileInputStream fis2 = new FileInputStream("str2arrayDic_300.data");
+	         FileInputStream fis2 = new FileInputStream("str2arrayDic_5800.data");
 	         ObjectInputStream ois2 = new ObjectInputStream(fis2);
 	         strToarrayStateDic = (HashMap<String,int[][]>) ois2.readObject();
 	         ois2.close();
@@ -104,7 +102,7 @@ public class MFECAgent implements Runnable {
 	      {
 	         System.out.println("File not found");
 	         c.printStackTrace();
-	      }*/
+	      }
 		 
 		ActionRobot.GoFromMainMenuToLevelSelection();
 	}
@@ -130,12 +128,12 @@ public class MFECAgent implements Runnable {
 			}
 		}
 		/*############## End Learning ############## */
-		rewardHist.clear(); // reward history 초기화
-		prevScore  = 0; // previous score 초기화
-		stateHist.clear(); // state history 초기화
-		actionHist.clear(); // action history 초기화
+		rewardHist.clear(); // reward history 珥덇린�솕
+		prevScore  = 0; // previous score 珥덇린�솕
+		stateHist.clear(); // state history 珥덇린�솕
+		actionHist.clear(); // action history 珥덇린�솕
 	}
-	
+
 	// run the client
 	public void run() {
 		aRobot.loadLevel(currentLevel);
@@ -161,13 +159,13 @@ public class MFECAgent implements Runnable {
 					System.out.println(" Level " + key + " Score: " + scores.get(key) + " ");
 				}
 				System.out.println("Total Score: " + totalScore);*/
-				//if(currentLevel==21) currentLevel = 0; // map1애 대해서만
+				//if(currentLevel==21) currentLevel = 0; // map1�븷 ���빐�꽌留�
 				
 				if(trainingFlag){
 					trainingFlag = false;
 					aRobot.loadLevel(currentLevel);
 				}else{
-					trainingFlag = true;
+					//trainingFlag = true;
 					aRobot.loadLevel(++currentLevel);
 				}
 				
@@ -177,35 +175,8 @@ public class MFECAgent implements Runnable {
 				firstShot = true;
 				
 			} else if (state == GameState.LOST) {
-				/*//Write total reward history as a txt file
-				int totalReward = 0;
-				for(Integer key: scores.keySet()) totalReward += scores.get(key);
-				totalRewardHist.add(totalReward);
-				try {
-					PrintWriter writer = new PrintWriter("totalRewardHistory.txt", "UTF-8");
-					for(int reward:totalRewardHist) writer.println(reward);
-				    writer.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}*/
-				
-				/*
-				//print size of states
-				int sizeADic = 0;
-				for(double i = 0; i<10;i++){
-					for(double j = 0;j<80; j++){
-						double action = j+i*0.1;
-						action = Math.round(action*10.0)/10.0;
-						HashMap<String, Integer> SRDic = ADic_Ag.get(action);
-						sizeADic += SRDic.size();
-					}
-				}
-				System.out.println("Number of states collected: " + sizeADic);
-				*/
-				
 				this.learn();
 				if(!trainingFlag) trainingFlag = true;
-				
 				System.out.println("####### Restart this level #######");
 				aRobot.restartLevel();
 			} else if (state == GameState.LEVEL_SELECTION) {
@@ -229,21 +200,12 @@ public class MFECAgent implements Runnable {
 		}
 	}
 
-	private double distance(Point p1, Point p2) {
-		return Math
-				.sqrt((double) ((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y)
-						* (p1.y - p2.y)));
-	}
-
 	public GameState solve()
 	{
-		// capture Image
+		// Capture the current screenshot and find the slingshots.
 		BufferedImage screenshot = ActionRobot.doScreenShot();
-		// process image
 		Vision vision = new Vision(screenshot);
-		// find the slingshot
 		Rectangle sling = vision.findSlingshotMBR();
-		// confirm the slingshot
 		while (sling == null && aRobot.getState() == GameState.PLAYING) {
 			System.out
 			.println("No slingshot detected. Please remove pop up or zoom out");
@@ -252,15 +214,15 @@ public class MFECAgent implements Runnable {
 			vision = new Vision(screenshot);
 			sling = vision.findSlingshotMBR();
 		}
-        // get all the pigs
+		
+        // Get all the pigs
  		List<ABObject> pigs = vision.findPigsMBR();
 		GameState state = aRobot.getState();
-		Point _tpt = null;
+		Point targetPt = null;
 		
 		// if there is a sling, then play, otherwise just skip.
 		if (sling != null) {
 			if (!pigs.isEmpty()) {
-				prevTarget = null;
 				Point releasePoint = null;
 				Shot shot = new Shot();
 				int dx,dy;
@@ -295,33 +257,15 @@ public class MFECAgent implements Runnable {
 				if(trainingFlag){
 					System.out.println("Training phase");
 					useMFEC = false;
-					
-					//greedy 목표물로 block들도 추가.
-					List<ABObject> blocks = vision.findBlocksMBR();
-					pigs.addAll(blocks);
-					
+					// Includes blocks 
+					//pigs.addAll(vision.findBlocksMBR());
 					// random pick up a pig
 					ABObject pig = pigs.get(randomGenerator.nextInt(pigs.size()));
-					_tpt = pig.getCenter();// if the target is very close to before, randomly choose a
-					//System.out.println("e-Greedy, randomly Pick up a pig dest : " + _tpt.toString());
+					targetPt = pig.getCenter();
 					
-					// point near it
-					if (prevTarget != null && distance(prevTarget, _tpt) < 10) {
-						double _angle = randomGenerator.nextDouble() * Math.PI * 2;
-						_tpt.x = _tpt.x + (int) (Math.cos(_angle) * 10);
-						_tpt.y = _tpt.y + (int) (Math.sin(_angle) * 10);
-						System.out.println("Randomly changing to " + _tpt);
-					}
-				}else{
-					System.out.println("Test phase");
-				}
-				
-				if (_tpt == null){
-					releasePoint = tp.findReleasePoint(sling, Math.toRadians(ag));
-				}else{	
-					prevTarget = new Point(_tpt.x, _tpt.y);
+					new Point(targetPt.x, targetPt.y);
 					// estimate the trajectory
-					ArrayList<Point> pts = tp.estimateLaunchPoint(sling, _tpt);
+					ArrayList<Point> pts = tp.estimateLaunchPoint(sling, targetPt);
 					
 					// do a high shot when entering a level to find an accurate velocity
 					if (firstShot && pts.size() > 1) releasePoint = pts.get(1);
@@ -339,7 +283,11 @@ public class MFECAgent implements Runnable {
 					//Do not make a minus angle shot
 					if(Math.toDegrees(tp.getReleaseAngle(sling, releasePoint))<0) 
 						releasePoint = tp.findReleasePoint(sling, Math.PI/4);
+				}else{
+					System.out.println("Test phase");
+					releasePoint = tp.findReleasePoint(sling, Math.toRadians(ag));
 				}
+				
 					
 				// Get the reference point
 				Point refPoint = tp.getReferencePoint(sling);
@@ -365,16 +313,18 @@ public class MFECAgent implements Runnable {
 							tapInterval =  60;
 					}
 					
-					if(_tpt == null){
+					
+					/* Best action 뽑았을 때 target Point 계산해줘야 함!!! */
+					if(targetPt == null){
 						ABObject pig = pigs.get(randomGenerator.nextInt(pigs.size()));
-						_tpt = pig.getCenter();// if the target is very close to before, randomly choose a
+						targetPt = pig.getCenter();// if the target is very close to before, randomly choose a
 					}
-					int tapTime = tp.getTapTime(sling, releasePoint, _tpt, tapInterval);
+					
+					int tapTime = tp.getTapTime(sling, releasePoint, targetPt, tapInterval);
 					dx = (int)releasePoint.getX() - refPoint.x;
 					dy = (int)releasePoint.getY() - refPoint.y;
 					shot = new Shot(refPoint.x, refPoint.y, dx, dy, 0, tapTime);
-				}
-				else{
+				}else{
 					System.err.println("No Release Point Found");
 					return state;
 				}
@@ -391,72 +341,37 @@ public class MFECAgent implements Runnable {
 						if(scale_diff < 25)
 						{
 							if(dx < 0)
-							{
+							{	
+								// Shoot!
 								aRobot.cshoot(shot);
+								
+								// Get a current score
 								int currentScore = StateUtil.getCurrentScore(ActionRobot.proxy);
 								if(currentScore ==0) currentScore = prevScore;
 								System.out.println("Previous Score: "+prevScore+", Current Score: "+currentScore);
-								state = aRobot.getState();
 								
 								if(currentScore >=prevScore){
 									/* State */
 									stateHist.add(MFCstateStr);
-									
 									/* Reward */
 									int currentReward = currentScore - prevScore;
 									prevScore = prevScore + currentReward;
-									System.out.println("Current Reward: "+currentReward);
 									rewardHist.add(currentReward);
-									
+									System.out.println("Current Reward: "+currentReward);
 									/* Action */
-									double thisAction = Math.toDegrees(tp.getReleaseAngle(sling, releasePoint));
-									if(useMFEC) thisAction = ag;
-									else thisAction = Math.round(thisAction*10.0)/10.0;
-									actionHist.add(thisAction);
-
-								}
-								
-								/*//Print Action size
-								for(double i = 0; i<10;i++){
-									System.out.print(i/10.0 +": ");
-									for(double j = 0;j<80; j++){
-										double action = j+i*0.1;
-										action = Math.round(action*10.0)/10.0;
-										HashMap<String, Integer> SRDic = ADic_Ag.get(action);
-										System.out.printf("%1d", SRDic.size());
+									double thisAction = ag;
+									if (!useMFEC){
+										thisAction = Math.round(Math.toDegrees(tp.getReleaseAngle(sling, releasePoint))*10.0)/10.0;
 									}
-									System.out.println();
-								}*/
+									actionHist.add(thisAction);
+								}
 								
 								System.out.println("Timestamp : "+numTimestamp);
+								if(numTimestamp % 100 ==0) saveDic(numTimestamp);
 								numTimestamp++;
 								
-								if(numTimestamp % 100 ==0){
-									try{
-						                  FileOutputStream fos = new FileOutputStream("AdicMap_"+numTimestamp+".data");
-						                  ObjectOutputStream oos = new ObjectOutputStream(fos);
-						                  oos.writeObject(ADic_Ag);
-						                  oos.close();
-						                  fos.close();
-						                  System.out.printf("Serialized Action Dic is saved in AdicMap_ts.data");
-							           }catch(IOException ioe){
-							                  ioe.printStackTrace();
-							           }
-									
-									try{
-										  FileOutputStream fos = new FileOutputStream("str2arrayDic_"+numTimestamp+".data");  
-						                  ObjectOutputStream oos = new ObjectOutputStream(fos);
-						                  oos.writeObject(strToarrayStateDic);
-						                  oos.close();
-						                  fos.close();
-						                  System.out.printf("Serialized str to array state dic is saved in str2arrayDic_ts.data");
-							           }catch(IOException ioe){
-							                  ioe.printStackTrace();
-							           }
-								}
-								
-								if ( state == GameState.PLAYING )
-								{
+								state = aRobot.getState();
+								if ( state == GameState.PLAYING ){
 									screenshot = ActionRobot.doScreenShot();
 									vision = new Vision(screenshot);
 									List<Point> traj = vision.findTrajPoints();
@@ -477,6 +392,43 @@ public class MFECAgent implements Runnable {
 		}
 		System.out.println("---------------------");
 		return state;
+	}
+	
+	public static void printActionSize(){
+		for(double i = 0; i<10;i++){
+			System.out.print(i/10.0 +": ");
+			for(double j = 0;j<80; j++){
+				double action = j+i*0.1;
+				action = Math.round(action*10.0)/10.0;
+				HashMap<String, Integer> SRDic = ADic_Ag.get(action);
+				System.out.printf("%1d", SRDic.size());
+			}
+			System.out.println();
+		}
+	}
+	
+	public static void saveDic(int numTimestamp){
+		try{
+            FileOutputStream fos = new FileOutputStream("AdicMap_"+numTimestamp+".data");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(ADic_Ag);
+            oos.close();
+            fos.close();
+            System.out.printf("Serialized Action Dic is saved in AdicMap_ts.data");
+         }catch(IOException ioe){
+                ioe.printStackTrace();
+         }
+		
+		try{
+			  FileOutputStream fos = new FileOutputStream("str2arrayDic_"+numTimestamp+".data");  
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(strToarrayStateDic);
+            oos.close();
+            fos.close();
+            System.out.printf("Serialized str to array state dic is saved in str2arrayDic_ts.data");
+         }catch(IOException ioe){
+                ioe.printStackTrace();
+         }
 	}
 	
 	public static double getStateDist(int[][] state1, int[][] state2){
@@ -515,7 +467,6 @@ public class MFECAgent implements Runnable {
 						arrayState2 = strToarrayStateDic.get(actionState);
 						
 						double dist = getStateDist(arrayState1, arrayState2);
-						//System.out.println("Calculated distance: " + dist);
 						SDistDic.put(actionState,dist);
 					}
 					
@@ -524,7 +475,6 @@ public class MFECAgent implements Runnable {
 					//System.out.println();
 					int rewardSum =0;
 					for(String actionState : topNstates){
-						//System.out.println("Distance: "+SDistDic.get(actionState));
 						rewardSum += SRDic.get(actionState);
 					}
 					expectedReward = rewardSum/n;
@@ -571,11 +521,8 @@ public class MFECAgent implements Runnable {
 	    
 	    return topNlist;
 	}
-	
-	
 
 	public static void main(String args[]) {
-
 		MFECAgent na = new MFECAgent();
 		if (args.length > 0)
 			na.currentLevel = Integer.parseInt(args[0]);
