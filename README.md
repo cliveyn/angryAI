@@ -1,6 +1,8 @@
-# univ.chicken
+Angrybird AI wtih Reinforcement Learning
+Implemented with Model-Free Episodic Control
+Source: https://aibirds.org
 
-## Related Projects
+### Related Projects
 https://github.com/deeplearning4j/rl4j 
 - Java-based open source projcets for deep reinforcement learning 
 - Support DQN (Deep Q Learning with double DQN) and Async RL (A3C, Async NStepQlearning - WIP)
