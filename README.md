@@ -1,6 +1,7 @@
 # Angrybird AI wtih Reinforcement Learning
 - Implemented with Model-Free Episodic Control
 - Default source code: https://aibirds.org
+- Demonstration: https://youtu.be/jSZyFshSMQs
 
 ### Related Projects
 https://github.com/deeplearning4j/rl4j 
